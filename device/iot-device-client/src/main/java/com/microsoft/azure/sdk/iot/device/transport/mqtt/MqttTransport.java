@@ -27,7 +27,7 @@ import java.util.concurrent.LinkedBlockingDeque;
  * </p>
  */
 
-public final class MqttTransport implements IotHubTransport
+public final class MqttTransport extends IotHubTransport
 {
     /** The MQTT connection lock. */
     protected final Object sendMessagesLock = new Object();
@@ -368,5 +368,10 @@ public final class MqttTransport implements IotHubTransport
     {
         //Codes_SRS_MQTTTRANSPORT_34_025: [This function shall register the provided connection state callback and context with the saved mqtt iot hub connection.]
         this.mqttIotHubConnection.registerConnectionStateCallback(callback, callbackContext);
+    }
+
+    public void registerConnectionStatusChangeCallback(IotHubConnectionStatusChangeCallback callback, Object callbackContext)
+    {
+        this.mqttIotHubConnection.registerConnectionStatusChangeCallback(callback, callbackContext);
     }
 }

@@ -5,17 +5,20 @@ package com.microsoft.azure.sdk.iot.device.transport.https;
 
 import com.microsoft.azure.sdk.iot.device.*;
 import com.microsoft.azure.sdk.iot.device.net.*;
+import com.microsoft.azure.sdk.iot.device.transport.IotHubConnection;
 
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 
+import static com.microsoft.azure.sdk.iot.device.IotHubStatusCode.OK_EMPTY;
+
 /**
  * An HTTPS connection between a device and an IoT Hub. Contains functionality
  * for synchronously connecting to the different IoT Hub resource URIs.
  */
-public class HttpsIotHubConnection
+public class HttpsIotHubConnection extends IotHubConnection
 {
     private static final String HTTPS_HEAD_TAG = "https://";
     private static final String HTTPS_PROPERTY_AUTHORIZATION_TAG = "authorization";
@@ -45,6 +48,8 @@ public class HttpsIotHubConnection
      */
     public HttpsIotHubConnection(DeviceClientConfig config)
     {
+        super();
+
         synchronized (HTTPS_CONNECTION_LOCK)
         {
             // Codes_SRS_HTTPSIOTHUBCONNECTION_11_001: [The constructor shall save the client configuration.]
@@ -127,6 +132,31 @@ public class HttpsIotHubConnection
             // Codes_SRS_HTTPSIOTHUBCONNECTION_11_010: [The function shall return a ResponseMessage with the status and payload.]
             IotHubStatusCode status = IotHubStatusCode.getIotHubStatusCode(response.getStatus());
             byte[] body = response.getBody();
+
+            switch (status)
+            {
+                case UNAUTHORIZED:
+                    this.connectionLostAndNotRetrying(IotHubConnectionStatusChangeReason.BAD_CREDENTIAL);
+                    break;
+                case HUB_OR_DEVICE_ID_NOT_FOUND:
+                    IotHubConnectionStatusChangeReason reason = this.currentConnectionStatus == IotHubConnectionStatus.CONNECTED ?
+                            IotHubConnectionStatusChangeReason.DEVICE_DISABLED :
+                            IotHubConnectionStatusChangeReason.BAD_CREDENTIAL;
+                    this.connectionLostAndNotRetrying(reason);
+                    break;
+                case SERVER_BUSY:
+                    this.connectionLostAndRetrying(IotHubConnectionStatusChangeReason.SERVICE_BUSY);
+                    break;
+                case OK:
+                case OK_EMPTY:
+                    this.connectionEstablished();
+                    break;
+                default:
+                    this.connectionLostAndNotRetrying(IotHubConnectionStatusChangeReason.COMMUNICATION_ERROR);
+                    break;
+            }
+
+
 
             return new ResponseMessage(body, status);
         }
@@ -401,7 +431,7 @@ public class HttpsIotHubConnection
             IotHubStatusCode resultStatus =
                     IotHubStatusCode.getIotHubStatusCode(
                             response.getStatus());
-            if (resultStatus != IotHubStatusCode.OK_EMPTY)
+            if (resultStatus != OK_EMPTY)
             {
                 String errMsg = String.format(
                         "Sending message result failed with status %s.%n",

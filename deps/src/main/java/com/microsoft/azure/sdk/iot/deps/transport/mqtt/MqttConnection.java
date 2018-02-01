@@ -20,24 +20,19 @@ import static com.microsoft.azure.sdk.iot.deps.transport.mqtt.MqttMessage.retrie
 
 public class MqttConnection implements MqttCallback
 {
+    static final int MAX_WAIT_TIME = 1000;
+    // paho mqtt only supports 10 messages in flight at the same time
+    static final int MAX_IN_FLIGHT_COUNT = 10;
     private static final String WS_SSL_URL_FORMAT = "wss://%s:443";
     private static final String SSL_URL_FORMAT = "ssl://%s:8883";
-
-    private MqttAsyncClient mqttAsyncClient = null;
-    private MqttConnectOptions connectionOptions = null;
-
     //mqtt connection options
     private static final int KEEP_ALIVE_INTERVAL = 230;
     private static final int MQTT_VERSION = 4;
     private static final boolean SET_CLEAN_SESSION = false;
-    static final int MAX_WAIT_TIME = 1000;
-
-    private MqttListener mqttListener;
-
     private final ObjectLock openLock = new ObjectLock();
-
-    // paho mqtt only supports 10 messages in flight at the same time
-    static final int MAX_IN_FLIGHT_COUNT = 10;
+    private MqttAsyncClient mqttAsyncClient = null;
+    private MqttConnectOptions connectionOptions = null;
+    private MqttListener mqttListener;
 
     /**
      * Constructor to create MqttAsync Client with Paho

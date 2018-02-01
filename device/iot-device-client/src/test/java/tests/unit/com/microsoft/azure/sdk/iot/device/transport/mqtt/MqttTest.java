@@ -340,7 +340,7 @@ public class MqttTest
                 times = 1;
                 mockMqttToken.waitForCompletion();
                 times = 1;
-                mockedMqttConnectionStateListener.connectionEstablished();
+                mockedMqttConnectionStateListener.onConnectionEstablished();
                 times = 1;
             }
         };
@@ -1043,13 +1043,13 @@ public class MqttTest
     {
         //arrange
         Mqtt mockMqtt = null;
-        Throwable t = new Throwable();
+        final Throwable t = new Throwable();
         baseConstructorExpectations();
 
         new StrictExpectations()
         {
             {
-                mockedMqttConnectionStateListener.connectionLost();
+                mockedMqttConnectionStateListener.onConnectionLost(t);
 
                 mockMqttAsyncClient.isConnected();
                 result = false;
@@ -1067,7 +1067,7 @@ public class MqttTest
                 result = mockMqttToken;
                 mockMqttToken.waitForCompletion();
 
-                mockedMqttConnectionStateListener.connectionEstablished();
+                mockedMqttConnectionStateListener.onConnectionEstablished();
 
                 mockMqttAsyncClient.isConnected();
                 result = true;

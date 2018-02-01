@@ -280,10 +280,44 @@ public class SendMessagesIT
     @Test
     public void sendMessagesOverAmqps() throws IOException, URISyntaxException, InterruptedException
     {
-        DeviceClient client = new DeviceClient(DeviceConnectionString.get(iotHubConnectionString, deviceAmqps), IotHubClientProtocol.AMQPS);
-        client.open();
-        sendMessages(client, IotHubClientProtocol.AMQPS, NUM_MESSAGES_PER_CONNECTION, RETRY_MILLISECONDS, SEND_TIMEOUT_MILLISECONDS);
-        client.closeNow();
+        String connString = "HostName=TimsPOCHub.azure-devices.net;DeviceId=3;SharedAccessKey=DLd3FOtkBCDF/MOToi3WTqqTwhpdT0qDRGzpF1SYRfs=";
+        IotHubClientProtocol protocol = IotHubClientProtocol.MQTT;
+
+        DeviceClient deviceClient = null;
+
+        if (protocol == IotHubClientProtocol.AMQPS)
+        {
+            TransportClient transportClient = new TransportClient(protocol);
+            deviceClient = new DeviceClient(connString, transportClient);
+            transportClient.open();
+        }
+        else
+        {
+            deviceClient = new DeviceClient(connString, protocol);
+        }
+
+
+
+        deviceClient.registerConnectionStatusChangeCallback(new IotHubConnectionStatusChangeCallback()
+        {
+            @Override
+            public void execute(IotHubConnectionStatus status, IotHubConnectionStatusChangeReason statusChangeReason, Object callbackContext)
+            {
+                System.out.println(status + " " + statusChangeReason);
+            }
+        }, new Object());
+
+        deviceClient.open();
+
+
+        //while (true)
+        //{
+        deviceClient.sendEventAsync(new Message("asdf"), new EventCallback(IotHubStatusCode.OK_EMPTY), new Message("asdf"));
+        Thread.sleep(1000);
+        //System.out.println("Running...");
+        //}
+
+        deviceClient.closeNow();
     }
 
     @Test

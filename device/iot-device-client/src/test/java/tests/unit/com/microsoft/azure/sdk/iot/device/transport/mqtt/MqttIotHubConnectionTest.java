@@ -1110,7 +1110,7 @@ public class MqttIotHubConnectionTest
         Deencapsulation.invoke(connection, "registerConnectionStateCallback", mockConnectionStateCallback, new Object());
 
         //act
-        connection.connectionLost();
+        connection.onConnectionLost(new Throwable());
 
         //assert
         new Verifications()

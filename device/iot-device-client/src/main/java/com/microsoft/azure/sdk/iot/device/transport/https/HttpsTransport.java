@@ -27,7 +27,7 @@ import java.util.concurrent.LinkedBlockingDeque;
  * user-defined message callback if a message and callback is found.
  * </p>
  */
-public final class HttpsTransport implements IotHubTransport
+public final class HttpsTransport extends IotHubTransport
 {
     /** The state of the HTTPS transport. */
     protected enum HttpsTransportState
@@ -40,9 +40,6 @@ public final class HttpsTransport implements IotHubTransport
     /** Connection state change callback */
     private IotHubConnectionStateCallback stateCallback;
     private Object stateCallbackContext;
-
-    /** The underlying HTTPS connection. */
-    private HttpsIotHubConnection connection;
 
     /** Messages waiting to be sent to an IoT Hub. */
     private final Queue<IotHubOutboundPacket> waitingList;
@@ -70,6 +67,8 @@ public final class HttpsTransport implements IotHubTransport
         this.config = config;
 
         this.state = HttpsTransportState.CLOSED;
+
+        this.iotHubConnection = new HttpsIotHubConnection(this.config);
     }
 
     /**
@@ -86,9 +85,6 @@ public final class HttpsTransport implements IotHubTransport
             return;
         }
 
-        // Codes_SRS_HTTPSTRANSPORT_11_023: [If the transport is already closed, the function shall throw an IllegalStateException.]
-        // Codes_SRS_HTTPSTRANSPORT_11_021: [The function shall establish an HTTPS connection with the IoT Hub given in the configuration.]
-        this.connection = new HttpsIotHubConnection(this.config);
         this.state = HttpsTransportState.OPEN;
     }
 
@@ -239,7 +235,7 @@ public final class HttpsTransport implements IotHubTransport
         // Codes_SRS_HTTPSTRANSPORT_11_005: [The function shall configure a valid HTTPS request and send it to the IoT Hub.]
         // Codes_SRS_HTTPSTRANSPORT_11_014: [If the send request fails while in progress, the function shall throw an IOException.]
         // Codes_SRS_HTTPSTRANSPORT_11_017: [If an invalid URI is generated from the configuration given in the constructor, the function shall throw a URISyntaxException.]
-        ResponseMessage responseMessage = this.connection.sendEvent(msg);
+        ResponseMessage responseMessage = ((HttpsIotHubConnection)this.iotHubConnection).sendEvent(msg);
 
         // Codes_SRS_HTTPSTRANSPORT_11_006: [The function shall add a packet containing the callbacks, contexts, and response for all sent messages to the callback queue.]
         this.moveInProgressListToCallbackList(responseMessage);
@@ -329,7 +325,7 @@ public final class HttpsTransport implements IotHubTransport
         // Codes_SRS_HTTPSTRANSPORT_11_010: [If a message is found and a message callback is registered, the function shall invoke the callback on the message.] 
         // Codes_SRS_HTTPSTRANSPORT_11_018: [If an invalid URI is generated from the configuration given in the constructor, the function shall throw a URISyntaxException.]
         // Codes_SRS_HTTPSTRANSPORT_11_019: [If the IoT Hub could not be reached, the function shall throw an IOException.]
-        Message message = this.connection.receiveMessage();
+        Message message = ((HttpsIotHubConnection)this.iotHubConnection).receiveMessage();
         if (message != null)
         {
             IotHubMessageResult result = callback.execute(message, context);
@@ -339,7 +335,7 @@ public final class HttpsTransport implements IotHubTransport
 
             try
             {
-                this.connection.sendMessageResult(result);
+                ((HttpsIotHubConnection)this.iotHubConnection).sendMessageResult(result);
             }
             catch (SecurityException sasTokenExpiredException)
             {

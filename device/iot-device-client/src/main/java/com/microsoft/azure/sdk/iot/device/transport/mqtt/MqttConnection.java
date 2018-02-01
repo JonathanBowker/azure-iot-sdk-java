@@ -5,6 +5,7 @@
 
 package com.microsoft.azure.sdk.iot.device.transport.mqtt;
 
+import com.microsoft.azure.sdk.iot.device.transport.IotHubConnection;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -18,21 +19,19 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class MqttConnection
 {
+    static final int QOS = 1;
+    static final int MAX_WAIT_TIME = 1000;
+    // paho mqtt only supports 10 messages in flight at the same time
+    static final int MAX_IN_FLIGHT_COUNT = 10;
+    //mqtt connection options
+    private static final int KEEP_ALIVE_INTERVAL = 230;
+    private static final int MQTT_VERSION = 4;
+    private static final boolean SET_CLEAN_SESSION = false;
     private MqttAsyncClient mqttAsyncClient = null;
     private MqttConnectOptions connectionOptions = null;
     private ConcurrentLinkedQueue<Pair<String, byte[]>> allReceivedMessages;
     private Object mqttLock;
     private MqttCallback mqttCallback;
-
-    //mqtt connection options
-    private static final int KEEP_ALIVE_INTERVAL = 230;
-    private static final int MQTT_VERSION = 4;
-    private static final boolean SET_CLEAN_SESSION = false;
-    static final int QOS = 1;
-    static final int MAX_WAIT_TIME = 1000;
-
-    // paho mqtt only supports 10 messages in flight at the same time
-    static final int MAX_IN_FLIGHT_COUNT = 10;
 
     /**
      * Constructor to create MqttAsync Client with Paho
@@ -125,6 +124,16 @@ public class MqttConnection
     }
 
     /**
+     * Setter for mqttAsyncClient
+     * @param mqttAsyncClient set mqttAsyncClient. Can be {@code null}.
+     */
+    void setMqttAsyncClient(MqttAsyncClient mqttAsyncClient)
+    {
+        //Codes_SRS_MQTTCONNECTION_25_011: [Setter for the MqttAsyncClient which can be null.]
+        this.mqttAsyncClient = mqttAsyncClient;
+    }
+
+    /**
      * Getter for queue for the messages
      * @return Queue for the messages
      */
@@ -152,15 +161,5 @@ public class MqttConnection
     {
         //Codes_SRS_MQTTCONNECTION_25_010: [Getter for the MqttConnectionOptions.]
         return connectionOptions;
-    }
-
-    /**
-     * Setter for mqttAsyncClient
-     * @param mqttAsyncClient set mqttAsyncClient. Can be {@code null}.
-     */
-    void setMqttAsyncClient(MqttAsyncClient mqttAsyncClient)
-    {
-        //Codes_SRS_MQTTCONNECTION_25_011: [Setter for the MqttAsyncClient which can be null.]
-        this.mqttAsyncClient = mqttAsyncClient;
     }
 }

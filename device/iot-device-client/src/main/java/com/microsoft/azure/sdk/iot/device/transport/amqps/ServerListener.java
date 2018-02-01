@@ -13,21 +13,21 @@ public interface ServerListener
      * @param messageHash The hash of the message.
      * @param deliveryState The state of the delivery.
      */
-    void messageSent(Integer messageHash, Boolean deliveryState);
+    void onMessageSent(Integer messageHash, Boolean deliveryState);
 
     /**
      * Method executed when a message was received from IoTHub.
      * @param message The message received.
      */
-    void messageReceived(AmqpsMessage message);
+    void onMessageReceived(AmqpsMessage message);
 
     /**
      * Method executed when the connection with the IoTHub is lost.
      */
-    void connectionLost();
+    void onConnectionLost();
 
     /**
      * Method executed when the connection with the IoTHub is established
      */
-    void connectionEstablished();
+    void onConnectionEstablished();
 }

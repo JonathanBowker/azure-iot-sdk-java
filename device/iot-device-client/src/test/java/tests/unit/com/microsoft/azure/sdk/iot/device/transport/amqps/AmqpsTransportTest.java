@@ -34,7 +34,7 @@ public class AmqpsTransportTest
     DeviceClientConfig mockConfig;
 
     @Mocked
-    AmqpsIotHubConnection mockConnection;
+    AmqpsIotHubBaseHandler mockConnection;
 
     @Mocked
     AmqpsMessage mockAmqpsMessage;
@@ -145,7 +145,7 @@ public class AmqpsTransportTest
         transport.open();
         transport.open();
 
-        final AmqpsIotHubConnection expectedConnection = mockConnection;
+        final AmqpsIotHubBaseHandler expectedConnection = mockConnection;
         new Verifications()
         {
             {
@@ -162,7 +162,7 @@ public class AmqpsTransportTest
         new NonStrictExpectations()
         {
             {
-                new AmqpsIotHubConnection(mockConfig);
+                new AmqpsIotHubBaseHandler(mockConfig);
                 result = mockConnection;
                 mockConfig.getDeviceId();
                 result = "deviceId";
@@ -172,7 +172,7 @@ public class AmqpsTransportTest
         AmqpsTransport transport = new AmqpsTransport(mockConfig);
         transport.open();
 
-        final AmqpsIotHubConnection expectedConnection = mockConnection;
+        final AmqpsIotHubBaseHandler expectedConnection = mockConnection;
         new Verifications()
         {
             {
@@ -188,7 +188,7 @@ public class AmqpsTransportTest
         new NonStrictExpectations()
         {
             {
-                new AmqpsIotHubConnection(mockConfig);
+                new AmqpsIotHubBaseHandler(mockConfig);
                 result = mockConnection;
                 mockConnection.open();
                 result = new IOException();
@@ -208,7 +208,7 @@ public class AmqpsTransportTest
         new NonStrictExpectations()
         {
             {
-                new AmqpsIotHubConnection(mockConfig);
+                new AmqpsIotHubBaseHandler(mockConfig);
                 result = mockConnection;
                 mockConfig.getDeviceId();
                 result = "deviceId";
@@ -234,7 +234,7 @@ public class AmqpsTransportTest
         new NonStrictExpectations()
         {
             {
-                new AmqpsIotHubConnection(mockConfig);
+                new AmqpsIotHubBaseHandler(mockConfig);
                 result = mockConnection;
                 mockConfig.getDeviceId();
                 result = "deviceId";
@@ -321,7 +321,7 @@ public class AmqpsTransportTest
         new NonStrictExpectations()
         {
             {
-                new AmqpsIotHubConnection(mockConfig);
+                new AmqpsIotHubBaseHandler(mockConfig);
                 result = mockConnection;
                 mockDeviceClient.getConfig();
                 result = mockDeviceClientConfig;
@@ -371,7 +371,7 @@ public class AmqpsTransportTest
         transport.close();
         transport.close();
 
-        final AmqpsIotHubConnection expectedConnection = mockConnection;
+        final AmqpsIotHubBaseHandler expectedConnection = mockConnection;
         new Verifications()
         {
             {
@@ -397,7 +397,7 @@ public class AmqpsTransportTest
         transport.open();
         transport.close();
 
-        final AmqpsIotHubConnection expectedConnection = mockConnection;
+        final AmqpsIotHubBaseHandler expectedConnection = mockConnection;
         new Verifications()
         {
             {
@@ -424,7 +424,7 @@ public class AmqpsTransportTest
             }
         };
         final AmqpsTransport transport = new AmqpsTransport(mockConfig);
-        final AmqpsIotHubConnection expectedConnection = mockConnection;
+        final AmqpsIotHubBaseHandler expectedConnection = mockConnection;
 
         new NonStrictExpectations()
         {
@@ -662,7 +662,7 @@ public class AmqpsTransportTest
         new NonStrictExpectations()
         {
             {
-                new AmqpsIotHubConnection(mockConfig);
+                new AmqpsIotHubBaseHandler(mockConfig);
                 result = mockConnection;
                 mockConfig.getDeviceId();
                 result = "deviceId";
@@ -699,7 +699,7 @@ public class AmqpsTransportTest
         new NonStrictExpectations()
         {
             {
-                new AmqpsIotHubConnection(mockConfig);
+                new AmqpsIotHubBaseHandler(mockConfig);
                 result = mockConnection;
                 new IotHubOutboundPacket(mockMessage, mockCallback, context);
                 result = mockPacket;
@@ -754,7 +754,7 @@ public class AmqpsTransportTest
         new NonStrictExpectations()
         {
             {
-                new AmqpsIotHubConnection(mockConfig);
+                new AmqpsIotHubBaseHandler(mockConfig);
                 result = mockConnection;
                 new IotHubOutboundPacket(mockMessage, mockCallback, context);
                 result = mockPacket;
@@ -825,7 +825,7 @@ public class AmqpsTransportTest
         new NonStrictExpectations()
         {
             {
-                new AmqpsIotHubConnection(mockConfig);
+                new AmqpsIotHubBaseHandler(mockConfig);
                 result = mockConnection;
                 new IotHubOutboundPacket(mockMsg, mockCallback, context);
                 result = mockPacket;
@@ -863,7 +863,7 @@ public class AmqpsTransportTest
         new NonStrictExpectations()
         {
             {
-                new AmqpsIotHubConnection(mockConfig);
+                new AmqpsIotHubBaseHandler(mockConfig);
                 result = mockConnection;
                 new IotHubOutboundPacket(mockMsg, mockCallback, context);
                 result = mockPacket;
@@ -906,7 +906,7 @@ public class AmqpsTransportTest
         new NonStrictExpectations()
         {
             {
-                new AmqpsIotHubConnection(mockConfig);
+                new AmqpsIotHubBaseHandler(mockConfig);
                 result = mockConnection;
                 new IotHubOutboundPacket(mockMessage, mockCallback, context);
                 result = mockPacket;
@@ -965,7 +965,7 @@ public class AmqpsTransportTest
         {
             {
 
-                new AmqpsIotHubConnection(mockConfig);
+                new AmqpsIotHubBaseHandler(mockConfig);
 
                 result = mockConnection;
                 new IotHubOutboundPacket(mockMessage, mockCallback, context);
@@ -1029,7 +1029,7 @@ public class AmqpsTransportTest
         {
             {
 
-                new AmqpsIotHubConnection(mockConfig);
+                new AmqpsIotHubBaseHandler(mockConfig);
 
                 result = mockConnection;
                 new IotHubOutboundPacket(mockMessage, mockCallback, context);
@@ -1127,7 +1127,7 @@ public class AmqpsTransportTest
         {
             {
 
-                new AmqpsIotHubConnection(mockConfig);
+                new AmqpsIotHubBaseHandler(mockConfig);
 
                 result = mockConnection;
                 mockIotHubCallbackPacket.getCallback();
@@ -1201,7 +1201,7 @@ public class AmqpsTransportTest
         {
             {
 
-                new AmqpsIotHubConnection(mockConfig);
+                new AmqpsIotHubBaseHandler(mockConfig);
 
                 result = mockConnection;
                 mockConfig.getDeviceTelemetryMessageCallback();
@@ -1305,7 +1305,7 @@ public class AmqpsTransportTest
         {
             {
 
-                new AmqpsIotHubConnection(mockConfig);
+                new AmqpsIotHubBaseHandler(mockConfig);
 
                 result = mockConnection;
                 mockConfig.getDeviceTelemetryMessageCallback();
@@ -1356,7 +1356,7 @@ public class AmqpsTransportTest
         {
             {
 
-                new AmqpsIotHubConnection(mockConfig);
+                new AmqpsIotHubBaseHandler(mockConfig);
 
                 result = mockConnection;
                 mockConfig.getDeviceTelemetryMessageCallback();
@@ -1406,7 +1406,7 @@ public class AmqpsTransportTest
         {
             {
 
-                new AmqpsIotHubConnection(mockConfig);
+                new AmqpsIotHubBaseHandler(mockConfig);
 
                 result = mockConnection;
                 mockConfig.getDeviceId();
@@ -1420,7 +1420,7 @@ public class AmqpsTransportTest
         Map<Integer, IotHubOutboundPacket> inProgressMessages = new ConcurrentHashMap<>();
         Deencapsulation.setField(transport, "inProgressMessages", inProgressMessages);
 
-        transport.messageSent(1, true);
+        transport.onMessageSent(1, true);
 
         new Verifications()
         {
@@ -1440,7 +1440,7 @@ public class AmqpsTransportTest
         {
             {
 
-                new AmqpsIotHubConnection(mockConfig);
+                new AmqpsIotHubBaseHandler(mockConfig);
 
                 result = mockConnection;
                 mockConfig.getDeviceId();
@@ -1456,7 +1456,7 @@ public class AmqpsTransportTest
         inProgressMessages.put(2, new IotHubOutboundPacket(new Message(), mockIotHubEventCallback, new Object()));
         Deencapsulation.setField(transport, "inProgressMessages", inProgressMessages);
 
-        transport.messageSent(1, true);
+        transport.onMessageSent(1, true);
 
         new Verifications()
         {
@@ -1482,7 +1482,7 @@ public class AmqpsTransportTest
         {
             {
 
-                new AmqpsIotHubConnection(mockConfig);
+                new AmqpsIotHubBaseHandler(mockConfig);
 
                 result = mockConnection;
                 mockConfig.getDeviceId();
@@ -1498,7 +1498,7 @@ public class AmqpsTransportTest
         inProgressMessages.put(2, new IotHubOutboundPacket(new Message(), mockIotHubEventCallback, new Object()));
         Deencapsulation.setField(transport, "inProgressMessages", inProgressMessages);
 
-        transport.messageSent(1, false);
+        transport.onMessageSent(1, false);
 
         new Verifications()
         {
@@ -1525,7 +1525,7 @@ public class AmqpsTransportTest
         {
             {
 
-                new AmqpsIotHubConnection(mockConfig);
+                new AmqpsIotHubBaseHandler(mockConfig);
 
                 result = mockConnection;
                 mockConfig.getDeviceId();
@@ -1546,7 +1546,7 @@ public class AmqpsTransportTest
         waitingMessages.add(new IotHubOutboundPacket(new Message(), mockIotHubEventCallback, new Object()));
         Deencapsulation.setField(transport, "waitingMessages", waitingMessages);
 
-        transport.connectionLost();
+        transport.onConnectionLost();
 
         Assert.assertTrue(inProgressMessages.size() == 0);
         Assert.assertTrue(waitingMessages.size() == 4);
@@ -1561,7 +1561,7 @@ public class AmqpsTransportTest
         {
             {
 
-                new AmqpsIotHubConnection(mockConfig);
+                new AmqpsIotHubBaseHandler(mockConfig);
 
                 result = mockConnection;
                 mockConnectionStateCallback.execute(IotHubConnectionState.CONNECTION_DROP, null);
@@ -1574,7 +1574,7 @@ public class AmqpsTransportTest
         transport.registerConnectionStateCallback(mockConnectionStateCallback, null);
         transport.open();
 
-        transport.connectionLost();
+        transport.onConnectionLost();
 
         new Verifications()
         {
@@ -1606,7 +1606,7 @@ public class AmqpsTransportTest
         {
             {
 
-                new AmqpsIotHubConnection(mockConfig);
+                new AmqpsIotHubBaseHandler(mockConfig);
 
                 result = mockConnection;
                 mockConnectionStateCallback.execute(IotHubConnectionState.CONNECTION_SUCCESS, null);
@@ -1619,7 +1619,7 @@ public class AmqpsTransportTest
         transport.registerConnectionStateCallback(mockConnectionStateCallback, null);
         transport.open();
 
-        transport.connectionEstablished();
+        transport.onConnectionEstablished();
 
         new Verifications()
         {
@@ -1638,7 +1638,7 @@ public class AmqpsTransportTest
         {
             {
 
-                new AmqpsIotHubConnection(mockConfig);
+                new AmqpsIotHubBaseHandler(mockConfig);
 
                 result = mockConnection;
                 mockConfig.getDeviceId();
@@ -1654,7 +1654,7 @@ public class AmqpsTransportTest
         receivedMessages.add(mockAmqpsMessage);
         Deencapsulation.setField(transport, "receivedMessages", receivedMessages);
 
-        transport.messageReceived(mockAmqpsMessage);
+        transport.onMessageReceived(mockAmqpsMessage);
 
         Assert.assertTrue(receivedMessages.size() == 3);
     }

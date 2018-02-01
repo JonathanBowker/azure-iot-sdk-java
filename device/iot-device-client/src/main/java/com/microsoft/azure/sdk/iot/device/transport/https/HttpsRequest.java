@@ -77,6 +77,7 @@ public class HttpsRequest
             // Otherwise, a connection could not be established and
             // getResponseStatus() throws an IOException.
             // Codes_SRS_HTTPSREQUEST_11_011: [If the client cannot connect to the server, the function shall throw an IOException.]
+            e.printStackTrace();
             responseStatus = this.connection.getResponseStatus();
             headerFields = this.connection.getResponseHeaders();
             // Codes_SRS_HTTPSREQUEST_11_012: [If an I/O exception occurs because of a bad response status code, the function shall attempt to flush or read the error stream so that the underlying HTTPS connection can be reused.]

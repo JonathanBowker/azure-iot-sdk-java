@@ -10,8 +10,10 @@ import java.io.IOException;
 import java.util.List;
 
 /** An interface for an IoT Hub transport. */
-public interface IotHubTransport extends Closeable
+public abstract class IotHubTransport implements Closeable
 {
+    protected IotHubConnection iotHubConnection;
+
     /**
      * Establishes a communication channel with an IoT Hub. If a channel is
      * already open, the function shall do nothing.
@@ -19,7 +21,7 @@ public interface IotHubTransport extends Closeable
      * @throws IOException if a communication channel cannot be
      * established.
      */
-    void open() throws IOException;
+    public abstract void open() throws IOException;
 
     /**
      * Establishes a communication channel usingmultiplexing with an IoT Hub. If a channel is
@@ -29,7 +31,7 @@ public interface IotHubTransport extends Closeable
      * @throws IOException if a communication channel cannot be
      * established.
      */
-    void multiplexOpen(List<DeviceClient> deviceClientList) throws IOException;
+    public abstract void multiplexOpen(List<DeviceClient> deviceClientList) throws IOException;
 
     /**
      * Closes all resources used to communicate with an IoT Hub. Once {@code close()} is
@@ -38,7 +40,7 @@ public interface IotHubTransport extends Closeable
      *
      * @throws IOException if an error occurs in closing the transport.
      */
-    void close() throws IOException;
+    public abstract void close() throws IOException;
 
     /**
      * Adds a message to the transport queue.
@@ -49,7 +51,7 @@ public interface IotHubTransport extends Closeable
      * @param callbackContext the context to be passed in when the callback is
      * invoked.
      */
-    void addMessage(Message message,
+    public abstract void addMessage(Message message,
             IotHubEventCallback callback,
             Object callbackContext);
 
@@ -62,7 +64,7 @@ public interface IotHubTransport extends Closeable
      * @param callbackContext the context to be passed in when the callback is
      * invoked.
      */
-    void addMessage(Message message,
+    public abstract void addMessage(Message message,
                     IotHubResponseCallback callback,
                     Object callbackContext);
 
@@ -73,10 +75,10 @@ public interface IotHubTransport extends Closeable
      *
      * @throws IOException if the server could not be reached.
      */
-    void sendMessages() throws IOException;
+    public abstract void sendMessages() throws IOException;
 
     /** Invokes the callbacks for all completed requests. */
-    void invokeCallbacks();
+    public abstract void invokeCallbacks();
 
     /**
      * <p>
@@ -88,7 +90,7 @@ public interface IotHubTransport extends Closeable
      *
      * @throws IOException if the server could not be reached.
      */
-    void handleMessage() throws IOException;
+    public abstract void handleMessage() throws IOException;
 
     /**
      * Returns {@code true} if the transport has no more messages to handle,
@@ -97,7 +99,7 @@ public interface IotHubTransport extends Closeable
      * @return {@code true} if the transport has no more messages to handle,
      * and {@code false} otherwise.
      */
-    boolean isEmpty();
+    public abstract boolean isEmpty();
 
     /**
      * Registers a callback to be executed whenever the connection to the IoT Hub is lost or established.
@@ -106,5 +108,13 @@ public interface IotHubTransport extends Closeable
      * @param callbackContext a context to be passed to the callback. Can be
      * {@code null} if no callback is provided.
      */
-    void registerConnectionStateCallback(IotHubConnectionStateCallback callback, Object callbackContext);
+    public void registerConnectionStateCallback(IotHubConnectionStateCallback callback, Object callbackContext)
+    {
+        this.iotHubConnection.registerConnectionStateCallback(callback, callbackContext);
+    }
+
+    public void registerConnectionStatusChangeCallback(IotHubConnectionStatusChangeCallback callback, Object callbackContext)
+    {
+        this.iotHubConnection.registerConnectionStatusChangeCallback(callback, callbackContext);
+    }
 }
